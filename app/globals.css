@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+h2 {
+  font-size: 40px;
+}
+
+.navbar {
+  display: flex;
+  flex-direction: row;
+  margin: 10px;
+  justify-content: end;
+}
+
+
+.signup-layout {
+  max-width: 500px;
+  display: grid;
+  padding: 10px;
+  gap: 3px;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
+}
+
+.login-layout {
+  max-width: 500px;
+  display: grid;
+  padding: 10px;
+  gap: 3px;
+  grid-template-rows: 0.5fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.login-layout .input,
+.signup-layout .input {
+  grid-column-start: 2;
+  grid-column-end: 5;
+  margin: 5px;
+}
+
+.login-layout .label,
+.signup-layout .label {
+  grid-column: 1 / 2;
+  align-self: center;
+  overflow-wrap: break-text;
+}
+
+.signup-layout .submit {
+  grid-row: 4;
+  grid-column: 4 / 5;
+  margin: 12px;
+}
+
+.login-layout .submit {
+  grid-row: 3;
+  grid-column: 4 / 5;
+  margin: 12px;
+}
+
+html,
+body {
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+#root {
+  height: 100%;
+  border: solid;
+}
+
+.login-page {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #d0f7f6;
+}
+
+.add-note {
+  font-family: sans-serif;
+  text-align: center;
+  display: grid;
+  grid-auto-flow: column;
+  max-width: 500px;
+  gap: 20px;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.add-note .input {
+  grid-column: 1 / 5;
+}
+
+.add-note button {
+  align-self: end;
+  padding: 10px;
+  grid-column: 4 / 5;
+}
+
+.notes-list {
+  display: grid;
+  grid-auto-flow: row;
+  gap: 10px;
+}
+
+:root {
+  --primary-color: #eef081;
+  --secondary-color: lemonchiffon;
+}
+
+.note .label {
+  background-color: var(--primary-color);
+}
+
+.note .description {
+  background-color: var(--secondary-color);
+}
