@@ -1,36 +1,69 @@
 'use client';
-import {useState, useEffect} from 'react';
+import { useEffect } from 'react';
+import { ISavedNote, ISyncStatus } from '../types';
+import { Mode, Delete } from '@mui/icons-material';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, getNotes, selectNotesStatus, selectNotes, setActiveNote, deleteNote} from './state'; 
+import {Accordion, AccordionSummary, AccordionDetails} from '@mui/material';
+import {styled} from '@mui/system';
+import {DownloadsList} from './Downloads';
 
-interface INote {
-    label: string;
-    description: string;
-    username: string;
-  }
-  
-  interface ISavedNote extends INote {
-      id: number;
-  }
-  
+
+const ToolBar = styled('div')({display: 'flex', gap: '10px'});
+
+const SavedNote = (props: {note: ISavedNote, onEdit: () => void}) => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  return (
+    <div className="note">
+      <Accordion>
+        <AccordionSummary sx={{backgroundColor: 'var(--primary-color)', fontSize: '20px'}}>
+          <div className="note-header">
+            <div>{props.note.label}</div>
+            <ToolBar>
+                <Mode onClick={props.onEdit} />
+                <Delete onClick={() => dispatch(deleteNote({id: props.note.id}))} />
+            </ToolBar>
+          </div>
+        </AccordionSummary>
+      <AccordionDetails className="description">
+        <div>
+          {props.note.description}
+        </div>
+        <div>{props.note.fnames.length > 0 && <DownloadsList downloads={props.note.fnames} noteId={props.note.id}  />}</div>
+      </AccordionDetails>
+      </Accordion>
+    </div>
+  )
+}
+
 
 export function NotesList() {
-    const [notes, setNotes] = useState<ISavedNote[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
+  const notes = useSelector(selectNotes);
+  const notesStatus = useSelector(selectNotesStatus);
 
-    useEffect(() => {
-      fetch('/api/notes').then((res) => res.json()).then((res) => {
-        setNotes(res.notes);
-      });
-    }, [setNotes])
+  useEffect(() => {
+    dispatch(getNotes());
+  }, [getNotes, dispatch]);
 
-    return (
-      <div className="notes-list">
-        <h2> Notes </h2>
-        {notes.map((note: ISavedNote) => {
-          return (<div className="note" key={note.id}>
-            <div className="label">{note.label}</div>
-            <div className="description">{note.description}</div>
-          </div>)
-})}
-      </div>
-    );
+  if (notesStatus === ISyncStatus.PENDING) {
+    return <em>Loading Notes</em>
   }
-  
+
+  if (notesStatus === ISyncStatus.REJECTED) {
+    return <em>Error loading Notes.</em>;
+  }
+
+  return (
+    <div className="notes-list">
+      {notes.length > 0 && <div className='header'> Notes <hr /></div>}
+      {notes.map((note: ISavedNote) => (
+        <SavedNote
+            key={note.id} 
+            note={note}
+            onEdit={() => dispatch(setActiveNote(note))} />))}
+    </div>
+  )
+}
+

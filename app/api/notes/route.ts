@@ -1,31 +1,55 @@
-import { getIronSession } from "iron-session";
-import { cookies } from "next/headers";
-import {getNotes} from '../../db';
+import { getUser } from "@@/app/notes/db";
+import {getNotes, deleteNote} from '../../db';
+import {addNote} from "@@/app/notes/db";
+import { NextRequest } from "next/server";
+import {deleteFiles} from '../../db';
 
-
-interface INote {
-    label: string;
-    description: string;
-    username: string;
-}
-  
-interface ISavedNote extends INote {
-    id: number;
-}
-
-// TODO: What does this return for a user who isn't logged in?
-// TODO: Move this to utils
 export async function GET() {
-    const store = await cookies();
-    const password = process.env.NEXT_PUBLIC_SESSION_SECRET ?? 'mysecretsession';
-    const {username} = await getIronSession<{username: string}>(store, {password, cookieName: 'session'});
+    const {email} = await getUser();
     
     let notes: any[] = [];
     try {
-        notes = await getNotes(username);
+        notes = await getNotes(email);
         console.log(notes);
+        return Response.json(notes);
     } catch (e) {
         console.log(`Error fetching notes - ${e}`);
+        return new Response(JSON.stringify(notes), {status: 500});
     }
-    return Response.json({"A": "B", username, notes});
+}
+
+export async function POST(req: Request) {
+    try {
+        const formData = await req.formData();
+        const note = await addNote(formData);
+        return Response.json(note);
+    } catch (e) {
+        console.log(`Error inserting notes - ${e}`);
+        return new Response("Error inserting notes", {status: 500});
+    }
+}
+
+export async function PUT(req: Request) {
+    try {
+        const formData = await req.formData();
+        const note = await addNote(formData, true);
+        return Response.json(note);
+    } catch (e) {
+        console.log(`Error upsert notes - ${e}`);
+        return new Response("Error upserting notes", {status: 500});
+    }
+}
+
+export async function DELETE(req: NextRequest) {
+    try {
+        const body = await req.json();
+        const noteId = parseInt(body.id, 10);
+        const {id} = await getUser();
+        await deleteNote(noteId, id);
+        await deleteFiles(noteId, id);
+        return new Response(JSON.stringify({'deleted': noteId}), {status: 200});
+    } catch (e) {
+        console.log(`Error deleting notes - ${e}`);
+        return new Response("Error deleting notes", {status: 500});
+    }
 }
