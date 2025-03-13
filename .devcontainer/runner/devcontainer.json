@@ -1,5 +1,4 @@
 {
     "dockerComposeFile": "../../compose.yml",
-    "service": "app",
-    "remoteUser": "nextjs"
+    "service": "app"
 }
