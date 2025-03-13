@@ -1,3 +1,4 @@
 {
-    "dockerComposeFile": "../../compose.yml"
+    "dockerComposeFile": "../../compose.yml",
+    "service": "app"
 }
