@@ -1,4 +1,5 @@
 {
     "dockerComposeFile": "../../compose.yml",
-    "service": "app"
+    "service": "app",
+    "remoteUser": "root"
 }
