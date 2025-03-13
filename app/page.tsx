@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { ISession } from './types';
 
 
 export default function Home() {

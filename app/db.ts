@@ -11,11 +11,11 @@ export const init = async () => {
         return client;
     }
     client = new Client({
-        user: 'madhu',
-        password: 'password',
+        user: 'postgres',
+        password: 'myscretpassword',
         database: 'notes',
-        host: '127.0.0.1',
-        port: 5432
+        host: 'db',
+        port: 5431
     });
     await client.connect();
     return client;
@@ -37,7 +37,7 @@ export const fetchNotes = async (user: number) => {
 
 
 
-export async function addUser(user: IUser): number {
+export async function addUser(user: IUser): Promise<number> {
     const client = await init();
     const res = await client.query(`insert into users (username, email, pwhash) values ('${user.name}', '${user.email}', '${user.pwhash}') returning id`);
     return res.rows[0].id;
@@ -76,8 +76,9 @@ export async function getNotes(email: string) {
 
     // TODO: Make this part of session
     const r = await client.query(`select id from users where email='${email}'`);
-    const id = r.rows[0].id;
+    const id = r.rows[0].id; 
     const res = await client.query(`select * from secure_notes where owner=${id}`);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return res.rows.map((row: any) => {
         const fnames = row.fnames ? row.fnames.split(',') : [];
         return (
@@ -154,7 +155,7 @@ export async function updateNote(note: ISavedNote, files: { [k: string]: File },
     }
     note.updated_at = (new Date()).toISOString();
     const updates: string[] = [];
-    for (let field of ['label', 'description', 'updated_at', 'owner', 'fnames']) {
+    for (const field of ['label', 'description', 'updated_at', 'owner', 'fnames']) {
         if (field === 'owner') {
             updates.push(`${field}=${id}`)
         } else if (field === 'fnames') {

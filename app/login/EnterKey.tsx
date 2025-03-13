@@ -2,10 +2,10 @@ import { importKey, setKey } from "../crypto";
 import { InputLabel, TextField, Button } from '@mui/material';
 import { useRouter } from 'next/navigation';
 
-export default function (props: {email: string}) {
+export default function EnterKey (props: {email: string}) {
     const router = useRouter();
 
-    const onSubmit = async (evt: any) => {
+    const onSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
         const keyS = evt.currentTarget.value;
         const key = await importKey(keyS);
         await setKey(key, props.email);

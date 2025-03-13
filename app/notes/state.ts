@@ -96,7 +96,7 @@ async function loadData(files: File[]) {
     return Promise.all(promises);
 }
 
-export const saveNote = createAsyncThunk('saveNote', async (arg: {formData: FormData, allowedFiles: string[], filesData: any}, thunkAPI) => {
+export const saveNote = createAsyncThunk('saveNote', async (arg: {formData: FormData, allowedFiles: string[], filesData: {[k: string]: Blob}}, thunkAPI) => {
     const {formData, allowedFiles, filesData} = arg;
     const label: string = formData.get('label') as string;
     const description: string = formData.get('description') as string;
@@ -140,7 +140,7 @@ export const saveNote = createAsyncThunk('saveNote', async (arg: {formData: Form
 
 
 const reducer = createReducer(initialState, (builder) => {
-    builder.addCase(getUser.pending, (state, action) => {
+    builder.addCase(getUser.pending, (state,) => {
         state.session.syncStatus = {status: ISyncStatus.PENDING};
     });
     builder.addCase(getUser.rejected, (state, action) => {
@@ -150,7 +150,7 @@ const reducer = createReducer(initialState, (builder) => {
         state.session.syncStatus = {status: ISyncStatus.FULFILLED};
         state.session.data = action.payload as ISession;
     });
-    builder.addCase(getNotes.pending, (state, action) => {
+    builder.addCase(getNotes.pending, (state,) => {
         state.notes.syncStatus = {status: ISyncStatus.PENDING};     
     });
     builder.addCase(getNotes.fulfilled, (state, action) => {
@@ -164,7 +164,7 @@ const reducer = createReducer(initialState, (builder) => {
         state.activeNote.data = action.payload;
         state.activeNote.downloadables = action.payload.fnames;
     });
-    builder.addCase(saveNote.pending, (state, action) => {
+    builder.addCase(saveNote.pending, (state, ) => {
         state.activeNote.syncStatus = {status: ISyncStatus.PENDING};
     });
     builder.addCase(saveNote.fulfilled, (state, action) => {

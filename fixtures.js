@@ -1,11 +1,14 @@
 const pg = require('pg');
 
+// If you want to run it form host machine
+//require('dotenv').config();
+
 let client = new pg.Client({
-    user: 'madhu',
-    password: 'password',
+    user: 'postgres',
+    host: 'db',
     database: 'notes',
-    host: '127.0.0.1',
-    post: 5432
+    port: 5431,
+    password: 'myscretpassword',
 });
 client.connect().then((r) => console.log('Client connected successfully'));
 

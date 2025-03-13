@@ -1,6 +1,6 @@
 'use client';
 import { TextField, Button } from "@mui/material";
-import React, { useCallback, useMemo, useRef} from 'react';
+import React, { useCallback, useRef} from 'react';
 import {ISavedNote} from '../types';
 import {useSelector, useDispatch} from 'react-redux';
 import {AppDispatch, selectActiveNote, saveNote, setActiveNote, selectDownloadables, setDownloadables} from './state';
@@ -10,19 +10,19 @@ export function NoteEditor() {
   const note = useSelector(selectActiveNote);
   const downloadables = useSelector(selectDownloadables);
   // Re upload files that are old attachments.
-  const filesRef = useRef<any>({});
+  const filesRef = useRef<{[k: string]: Blob}>({});
 
   const dispatch = useDispatch<AppDispatch>();
 
   const action = useCallback(async function (formData: FormData) {
     dispatch(saveNote({formData, allowedFiles: downloadables, filesData: filesRef.current}));
-  }, [dispatch, saveNote, downloadables, filesRef.current]);
+  }, [dispatch, downloadables]);
 
   const onChangeFiles = useCallback((evt: React.ChangeEvent<HTMLInputElement>) => {
     if (evt.target.files !== null) {
       const f: File[] = [];
       const fnames: string[] = [];
-      for (let file of evt.target.files) {
+      for (const file of evt.target.files) {
         f.push(file);
         fnames.push(file.name);
       }
@@ -31,14 +31,14 @@ export function NoteEditor() {
       dispatch(setDownloadables([]));
     }
     // for each of these files, read as datauri.
-  }, [dispatch, setActiveNote, note]);
+  }, [dispatch, note]);
   
   // You can only delete downloadables
   const onDelete = useCallback((idx: number) => {
     const names = downloadables;
     const nfnames = names.slice(0, idx).concat(names.slice(idx + 1));
     dispatch(setDownloadables(nfnames));
-  }, [downloadables, dispatch, setDownloadables]);
+  }, [downloadables, dispatch]);
 
   const onSetData = useCallback((data: Blob, name: string) => {
     filesRef.current[name] = data; 

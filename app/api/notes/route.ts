@@ -3,11 +3,12 @@ import {getNotes, deleteNote} from '../../db';
 import {addNote} from "@@/app/notes/db";
 import { NextRequest } from "next/server";
 import {deleteFiles} from '../../db';
+import {ISavedNote} from '../../types';
 
 export async function GET() {
     const {email} = await getUser();
     
-    let notes: any[] = [];
+    let notes: ISavedNote[] = [];
     try {
         notes = await getNotes(email);
         console.log(notes);

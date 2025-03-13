@@ -4,7 +4,7 @@ import { ContentCopy} from '@mui/icons-material';
 import {Popper} from '@mui/material';
 import {useCallback, useState, useRef} from 'react';
 
-export default function (props: {sKey: string}) {
+export default function ShowKey (props: {sKey: string}) {
     const [open, setOpen] = useState(false);
     const ref = useRef(null);
 
@@ -14,7 +14,7 @@ export default function (props: {sKey: string}) {
         setTimeout(() => {
             setOpen(false);
         }, 3000);
-    }, [open, setOpen, props.sKey]);
+    }, [setOpen, props.sKey]);
 
     return (
         <div className='container'>

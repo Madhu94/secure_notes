@@ -1,6 +1,6 @@
 'use client';
 import { Tab, Tabs, TextField, InputLabel, Button } from "@mui/material";
-import React, { useState, useCallback, useActionState, useContext } from "react";
+import React, { useState, useCallback, useActionState } from "react";
 import { getExportedKey, getKey } from '../crypto';
 import { createInvalidEmailError, createMandatoryFieldError, FormError, IError, KEY_GENERATION_FAILED } from "../errors";
 import { signup, login } from "../login";
@@ -25,7 +25,7 @@ const validateEmail = (email: string) => email.match(/(.*)@(.*)/);
 
 const validateMandatoryFields = <T extends object,>(fdata: T, allFields: string[]) => {
   const missing = [];
-  for (let field of allFields) {
+  for (const field of allFields) {
     if (!Object.keys(fdata).includes(field)) {
       missing.push(field);
     }
@@ -39,15 +39,16 @@ const validateMandatoryFields = <T extends object,>(fdata: T, allFields: string[
 
 const validateBasicForm = <T extends object,>(fdata: T, fields: IField[]) => {
   // Let's do mandatory field
-  let invalid = validateMandatoryFields(fdata, fields.map((f: IField) => f.name));
+  const invalid = validateMandatoryFields(fdata, fields.map((f: IField) => f.name));
   if (invalid) {
     return invalid;
   }
   // we know its available
-  for (let field of fields) {
+  for (const field of fields) {
     if (field.type === 'email') {
-      // TODO: Type error
+      // @ts-expect-error some tsc thing
       if (!validateEmail(fdata[field.name] as string)) {
+        // @ts-expect-error some tsc thing
         return createInvalidEmailError(fdata[field.name] as string);
       }
     }
@@ -58,9 +59,10 @@ const validateBasicForm = <T extends object,>(fdata: T, fields: IField[]) => {
 function LoginLike<T extends HasError>(props: {
   state: Partial<T & { session: ISession }>, name: string, fields: IField[],
   succeeded: boolean,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onSuccess: (state: any, fstate: T, setError: (e: IError) => void) => Promise<void>, action: (fd: FormData) => Promise<T>
 }) {
-
+  // @ts-expect-error some tsc thing
   const [state, action, isPending] = useActionState(props.action, props.state, 'n/a');
   const [clientError, setClientError] = useState<IError | null>(null);
   const [formState, setFormState] = useState<Partial<T>>({});
@@ -82,8 +84,10 @@ function LoginLike<T extends HasError>(props: {
     setFormState(updated);
   }, [formState, setFormState])
 
+  // @ts-expect-error some tsc thing
   if (!isPending && state.session && !props.succeeded) {
     // we do the type cast because we have validated this has to be mandatory fields
+    // @ts-expect-error some tsc thing
     props.onSuccess(state?.session as ISession, formState as T, setClientError);
   }
 
@@ -100,6 +104,7 @@ function LoginLike<T extends HasError>(props: {
               variant="outlined"
               type={field.type}
               disabled={props.succeeded}
+              // @ts-expect-error some tsc thing
               value={formState[field.name] ?? ''}
               onChange={(evt: React.ChangeEvent<HTMLInputElement>) => {
                 onFieldChange(field.name, evt);
@@ -144,6 +149,7 @@ function Signup(props: { onSuccess: () => void, succeeded: boolean }) {
     <div>
       <LoginLike<ISignupData>
         state={{}} name='signup' fields={signupFields} succeeded={props.succeeded}
+        // @ts-expect-error some tsc thing
         action={signup} onSuccess={onSuccess} />
       {props.succeeded && <ShowKey sKey={key as string} />}
     </div>
@@ -172,6 +178,7 @@ function Login(props: { onSuccess: () => void, succeeded: boolean }) {
 
   return (
     <div>
+      {/* @ts-expect-error some tsc thing */}
       <LoginLike<ILoginData> action={login} fields={loginFields} succeeded={props.succeeded} name='login'
         state={{}} onSuccess={onSuccess} />
       {props.succeeded && !sKey && <EnterKey email={(session as ISession).email} />}
@@ -184,14 +191,14 @@ export default function App() {
   const [done, setDone] = useState(false);
 
   const onChange = useCallback(
-    (evt: any, value: any) => {
+    (evt: React.SyntheticEvent, value: string) => {
       setSelectedTab(value);
     },
     [setSelectedTab]
   );
   const onSuccess = useCallback(() => {
     setDone(true);
-  }, [done, setDone]);
+  }, [setDone]);
 
   return (
     <div className="login-page container">

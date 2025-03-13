@@ -16,7 +16,7 @@ export async function addNote(formData: FormData, upsert: boolean = false) {
     const {email} = await getUser();
     const files: {[k: string]: File} = {};
     const fnames: string[] = []
-    for (let entry of formData.entries()) {
+    for (const entry of formData.entries()) {
         const [k, v] = entry;
         if (k.startsWith('file')) {
             const name = k.split('_').splice(1).join('');

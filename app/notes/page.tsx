@@ -4,7 +4,6 @@ import { NoteEditor } from './NoteEditor';
 import { NotesList } from './NotesList';
 import { useEffect } from 'react';
 import { ISyncStatus } from '../types';
-import { useRouter } from 'next/navigation';
 import {Provider} from 'react-redux';
 import {getUser, store, selectUserStatus} from './state';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +11,6 @@ import { useDispatch, useSelector } from 'react-redux';
 type AppDispatch = typeof store.dispatch;
 
 function Notes() {
-    const router = useRouter();
     const dispatch = useDispatch<AppDispatch>();
     const sessionStatus = useSelector(selectUserStatus);
 

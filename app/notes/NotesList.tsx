@@ -45,7 +45,7 @@ export function NotesList() {
 
   useEffect(() => {
     dispatch(getNotes());
-  }, [getNotes, dispatch]);
+  }, [dispatch]);
 
   if (notesStatus === ISyncStatus.PENDING) {
     return <em>Loading Notes</em>

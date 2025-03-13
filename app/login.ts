@@ -7,6 +7,7 @@ import { setSessionCookie } from '@@/app/cookies';
 
 const SALT_ROUNDS = 2;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function signup(state: any, fdata: FormData): Promise<{error: IError} | ({session: ISession})> {
     const data: ISignupData = {
         name: fdata.get('name') as string,
@@ -14,9 +15,8 @@ export async function signup(state: any, fdata: FormData): Promise<{error: IErro
         password: fdata.get('password') as string
     }
 
-    let client;
     try {
-        client = await init();
+        await init();
     } catch (e) {
         console.error(`DB Connection Error - ${e}`);
         return {error: { message: (e as Error).toString(), title: DB_ERROR}};
@@ -38,10 +38,11 @@ export async function signup(state: any, fdata: FormData): Promise<{error: IErro
     } 
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function login(state: any, fdata: FormData): Promise<{error: IError} | {session: ISession}> {
     // Do not trust the client. 
     const fields = ['email', 'password'];
-    for (let field of fields) {
+    for (const field of fields) {
         if (!fdata.get(field)) {
             console.error(`${field} is missing.`);
             return {error: createMandatoryFieldError([field])};

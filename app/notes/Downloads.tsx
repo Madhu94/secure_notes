@@ -45,7 +45,7 @@ export const Download = (props: { name: string, noteId: number, idx: number, onD
         }, (err) => {
           dispatch(fileRejected(props.idx, (err as Error).toString()));
         })
-    }, [dispatch, props.idx, props.noteId, props.name]);
+    }, [dispatch, email, props]);
   
     if (syncStatus?.status === ISyncStatus.PENDING || !syncStatus?.status) {
       return <em>Loading file data</em>;
@@ -55,7 +55,7 @@ export const Download = (props: { name: string, noteId: number, idx: number, onD
     return (
       <div className='download'>
         <a href={objectUrl} download={props.name}>{props.name}</a>
-        {props.onDelete && <Delete onClick={() => props.onDelete(props.idx)} />}
+        {props.onDelete && <Delete onClick={() => props.onDelete && props.onDelete(props.idx)} />}
       </div>
     )
 }
