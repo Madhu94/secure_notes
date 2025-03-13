@@ -1,0 +1,11 @@
+FROM node:alpine
+COPY ./fixtures.js /
+RUN npm install -g pg
+RUN npm config set prefix /usr/local 
+ENV NODE_PATH=/usr/local/lib/node_modules
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=myscretpassword
+ENV POSTGRES_DB=notes
+ENV POSTGRES_HOST=db
+ENV POSTGRES_PORT=5431
+CMD ["node", "/fixtures.js"]

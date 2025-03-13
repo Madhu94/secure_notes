@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: sn_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: myscretpassword
+      POSTGRES_DB: notes
+      POSTGRES_HOST: db
+    command: -p 5431
+    expose:
+      - "5431"
+    volumes:
+      - data_sql:/var/lib/postgresql/data
+  setup:
+    build:
+      context: .
+      dockerfile: Dockerfile.setup
+    container_name: seeder
+  app:
+    build:
+       context: .
+       dockerfile: Dockerfile.next
+    container_name: app
+    ports:
+    - "3000:3000"
+volumes:
+  data_sql:
